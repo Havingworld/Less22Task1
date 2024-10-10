@@ -1,36 +1,28 @@
-﻿#include <iostream>
+#include <iostream>
 #include <map>
 #include <vector>
 #include <string>
 
 
 // Функция для добавления нового записи в справочник
-void addEntry(std::map<std::string, std::vector<std::string>>& phoneBook, std::string& phone, std::string& name) {
-    phoneBook[name].push_back(phone);
+void addEntry(std::map<std::string, std::vector<std::string>>& surnameToNumber, std::map<std::string, std::string>& numberToSurname, std::string& phone, std::string& name) {
+    surnameToNumber[name].push_back(phone);
+    numberToSurname[phone] = name;
 }
 
 // Функция для получения фамилии по номеру телефона
-void getNameByPhone(std::map<std::string, std::vector<std::string>>& phoneBook, std::string& phone) {
-    bool bFound{ false };
-    for (const std::pair<std::string, std::vector<std::string>>& item : phoneBook) {
-        for (int i{ 0 }; i < item.second.size(); i++){
-            if (item.second[i] == phone) {
-                std::cout << item.first << "; ";
-                bFound = true;
-            }
-        }
-    }
-    if (bFound) {
-        std::cout << std::endl;
+void getNameByPhone(std::map<std::string, std::string>& numberToSurname, std::string& phone) {
+    if (numberToSurname.count(phone)) {
+        std::cout << numberToSurname.find(phone)->second << std::endl;
         return;
     } 
     std::cout << "Not found getNameByPhone" << std::endl;
 }
 
 // Функция для получения номеров телефона по фамилии
-void getPhonesByName(std::map<std::string, std::vector<std::string>>& phoneBook, std::string& cName) {
-    auto itf = phoneBook.find(cName);
-    if (itf != phoneBook.end()) {
+void getPhonesByName(std::map<std::string, std::vector<std::string>>& surnameToNumber, std::string& cName) {
+    auto itf = surnameToNumber.find(cName);
+    if (itf != surnameToNumber.end()) {
         for (auto& phone : itf->second) {
             std::cout << phone << "; ";
         }
@@ -41,11 +33,12 @@ void getPhonesByName(std::map<std::string, std::vector<std::string>>& phoneBook,
 }
 
 int main() {
-    std:: map<std::string, std::vector<std::string>> phoneBook;
+    std::map<std::string, std::string> numberToSurname;
+    std::map<std::string, std::vector<std::string>> surnameToNumber;
     std::string cInput{ "" };
-    std::cout << "11-11-11 Lastname - for add an entry to the phonebook" << std::endl
-        << "11-11-11 - for find out lastname by phone number" << std::endl
-        << "Lastname - for find out phone number by lastname" << std::endl;
+    std::cout << "11-11-11 Surname - for add an entry to the phonebook" << std::endl
+        << "11-11-11 - for find out surname by phone number" << std::endl
+        << "Lastname - for find out phone number by surname" << std::endl;
 
     while (cInput != "-1") {
         getline(std::cin, cInput);
@@ -56,20 +49,20 @@ int main() {
         if (pos == std::string::npos) {
             // Запрос на получение телефона по фамилии
             if (cInput[0] > 64 && cInput[0] < 123){
-                getPhonesByName(phoneBook, cInput);
+                getPhonesByName(surnameToNumber, cInput);
             }
             else {
-                getNameByPhone(phoneBook, cInput);
+                getNameByPhone(numberToSurname, cInput);
             }
         } else {
             std::string cPhone = cInput.substr(0, pos);
             std::string cName = cInput.substr(pos + 1);
             if (cName.empty()) {
                 // Запрос на получение фамилии по телефону
-                getNameByPhone(phoneBook, cPhone);
+                getNameByPhone(numberToSurname, cPhone);
             } else {
                 // Добавление новой записи в справочник
-                addEntry(phoneBook, cPhone, cName);
+                addEntry(surnameToNumber, numberToSurname,cPhone, cName);
             }
         }
     }
