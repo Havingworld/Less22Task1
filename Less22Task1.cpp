@@ -12,8 +12,9 @@ void addEntry(std::map<std::string, std::vector<std::string>>& surnameToNumber, 
 
 // Функция для получения фамилии по номеру телефона
 void getNameByPhone(std::map<std::string, std::string>& numberToSurname, std::string& phone) {
-    if (numberToSurname.count(phone)) {
-        std::cout << numberToSurname.find(phone)->second << std::endl;
+    auto itf = surnameToNumber.find(cName);
+    if (itf != surnameToNumber.end()) {
+        std::cout << itf->second << std::endl;
         return;
     } 
     std::cout << "Not found getNameByPhone" << std::endl;
